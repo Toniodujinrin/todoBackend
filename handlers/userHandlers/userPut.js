@@ -1,10 +1,16 @@
 const _data = require("../../lib/data");
+const validate = require("../tokenHandlers/tokenValidate");
 const helpers = require("../../helpers");
 
 const put = async (data, callback) => {
   //required data = email
   //optional data : firstName, lastName , password
   const userData = data.payload;
+  const headers = data.headers;
+  const token =
+    typeof headers.token == "string" && headers.token.trim().length === 20
+      ? headers.token
+      : false;
   const firstName =
     typeof userData.firstName == "string" &&
     userData.firstName.trim().length > 0
@@ -17,7 +23,7 @@ const put = async (data, callback) => {
   const password =
     typeof userData.password == "string" && userData.password.trim().length > 0
       ? userData.password.trim()
-      : falsse;
+      : false;
   const email =
     typeof userData.email == "string" && userData.email.trim().length > 0
       ? userData.email.trim()
@@ -28,8 +34,25 @@ const put = async (data, callback) => {
       if (firstName) data.firstName = firstName;
       if (lastName) data.lastName = lastName;
       if (password) data.password = helpers.hash(password);
-      await _data.put("users", email, data);
-      callback(200, { message: "user has been successfuly updated" });
+      if (token) {
+        validate(token, email, async (valid) => {
+          try {
+            if (valid) {
+              await _data.put("users", email, data);
+              callback(200, { message: "user has been successfuly updated" });
+            } else {
+              callback(403, {
+                error:
+                  "token passed in header does not match token assigned to the user ",
+              });
+            }
+          } catch (error) {
+            callback(500, { error: error });
+          }
+        });
+      } else {
+        callback(400, { error: "token passed in header is not valid" });
+      }
     } catch (error) {
       callback(500, {
         error:

@@ -21,4 +21,16 @@ helpers.hash = function (str) {
   return hash;
 };
 
+helpers.createRandomString = (length) => {
+  const chars = "abcdefghijklmnopqrstuvwxyz1234567890";
+  let str = "";
+  if (length) {
+    for (i = 0; i < length; i++) {
+      const randomLetter = chars.at(Math.round(Math.random() * length));
+      str += randomLetter;
+    }
+    return str;
+  } else return false;
+};
+
 module.exports = helpers;

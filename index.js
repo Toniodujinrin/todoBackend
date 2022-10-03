@@ -63,6 +63,8 @@ const server = http.createServer((req, res) => {
 const routes = {
   notFound: handlers.notFound,
   users: handlers.users,
+  tokens: handlers.tokens,
+  tasks: handlers.tasks,
 };
 
 server.listen(process.env.PORT, () => {

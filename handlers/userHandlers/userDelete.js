@@ -1,15 +1,32 @@
 const _data = require("../../lib/data");
+const validate = require("../tokenHandlers/tokenValidate");
 //required data:email
 const Delete = async (data, callback) => {
+  const headers = data.headers;
   const userData = data.query;
+  const token =
+    typeof headers.token == "string" && headers.token.trim().length === 20
+      ? headers.token
+      : false;
+
   const email =
     typeof userData.email == "string" && userData.email.trim().length > 0
       ? userData.email
       : false;
   if (email) {
     try {
-      await _data.delete("users", email);
-      callback(200, { message: "user successfuly deleted" });
+      validate(token, email, async (valid) => {
+        if (valid) {
+          try {
+            await _data.delete("users", email);
+            callback(200, { message: "user successfuly deleted" });
+          } catch (error) {
+            callback(500, { error: error });
+          }
+        } else {
+          callback(403, { error: "you are not permited to delete this data" });
+        }
+      });
     } catch (error) {
       callback(500, {
         error:

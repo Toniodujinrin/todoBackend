@@ -17,7 +17,7 @@ const post = async (data, callback) => {
   const password =
     typeof userData.password == "string" && userData.password.trim().length > 0
       ? userData.password.trim()
-      : falsse;
+      : false;
   const email =
     typeof userData.email == "string" && userData.email.trim().length > 0
       ? userData.email.trim()
@@ -30,6 +30,7 @@ const post = async (data, callback) => {
       user.lastName = lastName;
       user.password = helpers.hash(password);
       user.email = email;
+
       await _data.post("users", email, user);
       callback(200, { message: "user created successfuly" });
     } catch (error) {
