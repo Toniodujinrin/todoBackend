@@ -11,6 +11,7 @@ const Validate = async (token, email, callback) => {
     try {
       const data = await _data.get("tokens", tokenId);
       if (data) {
+        console.log(data);
         //check if the token has expired and check if the userEmail stored in the token matches the user email passed as an argument
         if (data.expires >= Date.now() && data.userEmail == userEmail) {
           callback(true);

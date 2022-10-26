@@ -14,19 +14,40 @@ const Delete = async (data, callback) => {
       ? userData.email
       : false;
   if (email) {
+    //check if the email exists
+
     try {
-      validate(token, email, async (valid) => {
-        if (valid) {
-          try {
-            await _data.delete("users", email);
-            callback(200, { message: "user successfuly deleted" });
-          } catch (error) {
-            callback(500, { error: error });
+      //check if the email exist
+      const data = await _data.get("users", email);
+      if (data) {
+        validate(token, email, async (valid) => {
+          if (valid) {
+            try {
+              //delete all checks  related to the user
+
+              if (data.tasks) {
+                data.tasks.forEach(async (item) => {
+                  await _data.delete("tasks", item._id);
+                });
+              }
+              const res = await _data.delete("users", email);
+              if (res) {
+                callback(200, { message: "user successfuly deleted" });
+              } else {
+                callback(500, { message: "user could not be deleted" });
+              }
+            } catch (error) {
+              callback(500, { error: error });
+            }
+          } else {
+            callback(403, {
+              error: "you are not permited to delete this data",
+            });
           }
-        } else {
-          callback(403, { error: "you are not permited to delete this data" });
-        }
-      });
+        });
+      } else {
+        callback(404, { error: "user does not exist" });
+      }
     } catch (error) {
       callback(500, {
         error:

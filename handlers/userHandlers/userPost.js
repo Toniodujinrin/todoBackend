@@ -30,14 +30,20 @@ const post = async (data, callback) => {
       user.lastName = lastName;
       user.password = helpers.hash(password);
       user.email = email;
+      user._id = email;
 
-      await _data.post("users", email, user);
-      callback(200, { message: "user created successfuly" });
+      const res = await _data.post("users", email, user);
+      if (res) {
+        callback(200, { message: "user created successfuly" });
+      } else {
+        callback(500, { message: "failed to connect to mongodb client" });
+      }
     } catch (error) {
       callback(500, {
         error:
           "An error occured when creating the user. the user may already exist",
       });
+      console.log(error);
     }
   } else {
     callback(400, {

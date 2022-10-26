@@ -21,26 +21,29 @@ const post = async (data, callback) => {
     typeof payload.email == "string" && payload.email.trim().length > 0
       ? payload.email
       : false;
-  const completion =
-    typeof payload.completion == "string" &&
-    payload.completion.trim().length > 0
-      ? payload.completion
+  const due = typeof payload.due == "string" ? payload.due : false;
+  const createdAt =
+    typeof payload.createdAt == "number" ? payload.createdAt : false;
+  const status =
+    typeof payload.status == "string" && payload.status.length !== 0
+      ? payload.status
       : false;
-  if (email && details) {
+
+  const completed =
+    typeof payload.completed == "boolean" ? payload.completed : false;
+  const shouldAlert =
+    typeof payload.shouldAlert == "boolean" ? payload.shouldAlert : false;
+  if (email && details && createdAt && status && due) {
     const task = {};
-    task.id = helpers.createRandomString(20);
+    task._id = helpers.createRandomString(20);
     task.details = details;
-    task.createdAt = Date.now();
+    task.createdAt = createdAt;
     task.user = email;
-    if (completion) {
-      completionString = completion.trim();
-      const year = completionString.slice(0, 4);
-      const month = completionString.slice(5, 7);
-      const day = completionString.slice(8, 10);
-      const hour = completionString.slice(11);
-      const normalizedDate = `${day}/${month}/${year}, ${hour}`;
-      task.completion = normalizedDate;
-    }
+    task.due = due;
+    task.status = status;
+    task.completed = completed;
+    task.shouldAlert = shouldAlert;
+
     try {
       //check if the user with email provided exists in the database
       const data = await _data.get("users", email);
@@ -54,12 +57,14 @@ const post = async (data, callback) => {
                 data.tasks = [];
               }
               //push the new task to the begin of the tasks array
-              data.tasks.unshift(task.id);
-              await _data.put("users", email, data);
-              //append the task object to the db
-
-              await _data.post("tasks", task.id, task);
-              callback(200, { message: "task successfuly created" });
+              data.tasks.unshift(task);
+              const res1 = await _data.put("users", email, data);
+              const res2 = await _data.post("tasks", task._id, task);
+              if (res1 && res2) {
+                callback(200, { message: "task successfuly created" });
+              } else {
+                callback(500, { error: "could not update task objects" });
+              }
             } catch (error) {
               callback(500, {
                 error: "error occured when trying to create the tasks",

@@ -41,8 +41,12 @@ handlers._tasks.post = (data, callback) => {
 handlers._tasks.get = (data, callback) => {
   tasksHanlders.get(data, callback);
 };
-handlers._tasks.put = (data, callback) => {};
-handlers._tasks.delete = (data, callback) => {};
+handlers._tasks.put = (data, callback) => {
+  tasksHanlders.put(data, callback);
+};
+handlers._tasks.delete = (data, callback) => {
+  tasksHanlders.delete(data, callback);
+};
 
 handlers._users = {};
 handlers._users.post = (data, callback) => {

@@ -1,7 +1,6 @@
-const { builtinModules } = require("module");
 const crypto = require("crypto");
 require("dotenv").config();
-
+const nodemailer = require("nodemailer");
 const helpers = {};
 
 helpers.parseJsonString = (str) => {
@@ -31,6 +30,31 @@ helpers.createRandomString = (length) => {
     }
     return str;
   } else return false;
+};
+
+helpers.sendNodeMailer = (userEmail, message) => {
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.TEST_EMAIL,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  let details = {
+    from: "marcelodujinrin@gmail.com",
+    to: userEmail,
+    subject: "Check Alert",
+    text: message,
+  };
+
+  transporter.sendMail(details, (err) => {
+    if (err) {
+      console.log("error sending mail");
+    } else {
+      console.log(`email successfuly sent to ${userEmail}`);
+    }
+  });
 };
 
 module.exports = helpers;

@@ -20,11 +20,16 @@ const post = async (data, callback) => {
         if (data.password == hashedPassword) {
           //create the token object
           const tokenObject = {};
-          tokenObject.token = helpers.createRandomString(20);
+          tokenObject._id = helpers.createRandomString(20);
           tokenObject.expires = Date.now() + 1000 * 60 * 60 * 24;
           tokenObject.userEmail = email;
           //save the token object
-          await _data.post("tokens", tokenObject.token, tokenObject);
+          try {
+            await _data.post("tokens", tokenObject.token, tokenObject);
+          } catch (error) {
+            callback(500, { error: error });
+          }
+
           callback(200, tokenObject);
         } else {
           callback(403, {

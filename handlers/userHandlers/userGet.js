@@ -18,17 +18,21 @@ const get = async (data, callback) => {
     //check if the user exist if it does remove the hashed password and return the user object
     try {
       const data = await _data.get("users", email);
-      delete data.password;
-      //check if the token is valid and it belongs to the user
-      validate(token, email, (validity) => {
-        if (validity) {
-          callback(200, data);
-        } else {
-          callback(403, {
-            error: "you are not allowed to view this users data",
-          });
-        }
-      });
+      if (data) {
+        delete data.password;
+        //check if the token is valid and it belongs to the user
+        validate(token, email, (validity) => {
+          if (validity) {
+            callback(200, data);
+          } else {
+            callback(403, {
+              error: "you are not allowed to view this users data",
+            });
+          }
+        });
+      } else {
+        callback(404, { error: "could not get user data" });
+      }
     } catch (error) {
       callback(500, {
         error:
@@ -39,6 +43,7 @@ const get = async (data, callback) => {
   } else {
     callback(400, {
       error: "the data passed in the query string is invalid",
+      query: data.query,
     });
   }
 };

@@ -31,6 +31,7 @@ const put = async (data, callback) => {
   if (email && (firstName || lastName || password)) {
     try {
       const data = await _data.get("users", email);
+      console.log(data);
       if (firstName) data.firstName = firstName;
       if (lastName) data.lastName = lastName;
       if (password) data.password = helpers.hash(password);
@@ -38,8 +39,12 @@ const put = async (data, callback) => {
         validate(token, email, async (valid) => {
           try {
             if (valid) {
-              await _data.put("users", email, data);
-              callback(200, { message: "user has been successfuly updated" });
+              try {
+                await _data.put("users", email, data);
+                callback(200, { message: "user has been successfuly updated" });
+              } catch (error) {
+                callback(500, { error: "error occured trying to update user" });
+              }
             } else {
               callback(403, {
                 error:

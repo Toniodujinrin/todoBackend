@@ -9,12 +9,15 @@ const get = async (data, callback) => {
       : false;
   if (tokenId) {
     try {
-      const data = await _data.get("tokens", tokenId);
-
-      if (data) {
-        callback(200, data);
-      } else {
-        callback(404, { error: "could not find a token with that id" });
+      try {
+        const data = await _data.get("tokens", tokenId);
+        if (data) {
+          callback(200, data);
+        } else {
+          callback(404, { error: "could not find a token with that id" });
+        }
+      } catch (error) {
+        callback(500, { error: error });
       }
     } catch (error) {
       callback(500, { error: "an error occured when reading the token" });

@@ -1,0 +1,156 @@
+const express = require("express");
+const cors = require("cors");
+const handlers = require("./handlers/handlers");
+const stringDecoder = require("string_decoder").StringDecoder;
+require("dotenv").config();
+
+const expressApp = {};
+const app = express();
+app.use(cors());
+
+const posts = (currentRoute) => {
+  app.post(`/${currentRoute}`, (req, res) => {
+    const data = {};
+
+    data.headers = req.headers;
+    data.query = req.query;
+    let buffer = "";
+
+    const decoder = new stringDecoder("utf-8");
+    req.on("data", (data) => {
+      buffer += decoder.write(data);
+    });
+    req.on("end", () => {
+      buffer += decoder.end();
+
+      const parsedJsonObject = JSON.parse(buffer);
+      data.payload = parsedJsonObject;
+      routes[currentRoute].post(data, (statusCode, resPayload) => {
+        const stringPayload = JSON.stringify(resPayload);
+        res.setHeader("Content-Type", "application/json");
+        res.writeHead(statusCode);
+        res.write(stringPayload);
+        res.end();
+        console.log(statusCode, stringPayload);
+      });
+    });
+  });
+};
+const gets = (currentRoute) => {
+  app.get(`/${currentRoute}`, (req, res) => {
+    const data = {};
+
+    data.headers = req.headers;
+    data.query = req.query;
+    let buffer = "";
+
+    const decoder = new stringDecoder("utf-8");
+    req.on("data", (data) => {
+      buffer += decoder.write(data);
+    });
+    req.on("end", () => {
+      buffer += decoder.end();
+
+      //const parsedJsonObject = JSON.parse(buffer);
+      //data.payload = parsedJsonObject;
+      routes[currentRoute].get(data, (statusCode, resPayload) => {
+        const stringPayload = JSON.stringify(resPayload);
+        res.setHeader("Content-Type", "application/json");
+        res.writeHead(statusCode);
+        res.write(stringPayload);
+        res.end();
+        console.log(statusCode, stringPayload);
+      });
+    });
+  });
+};
+
+const puts = (currentRoute) => {
+  app.put(`/${currentRoute}`, (req, res) => {
+    const data = {};
+
+    data.headers = req.headers;
+    data.query = req.query;
+    let buffer = "";
+
+    const decoder = new stringDecoder("utf-8");
+    req.on("data", (data) => {
+      buffer += decoder.write(data);
+    });
+    req.on("end", () => {
+      buffer += decoder.end();
+
+      const parsedJsonObject = JSON.parse(buffer);
+      data.payload = parsedJsonObject;
+      routes[currentRoute].put(data, (statusCode, resPayload) => {
+        const stringPayload = JSON.stringify(resPayload);
+        res.setHeader("Content-Type", "application/json");
+        res.writeHead(statusCode);
+        res.write(stringPayload);
+        res.end();
+        console.log(statusCode, stringPayload);
+      });
+    });
+  });
+};
+
+const deletes = (currentRoute) => {
+  app.delete(`/${currentRoute}`, (req, res) => {
+    const data = {};
+
+    data.headers = req.headers;
+    data.query = req.query;
+    let buffer = "";
+
+    const decoder = new stringDecoder("utf-8");
+    req.on("data", (data) => {
+      buffer += decoder.write(data);
+    });
+    req.on("end", () => {
+      buffer += decoder.end();
+
+      const parsedJsonObject = JSON.parse(buffer);
+      data.payload = parsedJsonObject;
+      routes[currentRoute].delete(data, (statusCode, resPayload) => {
+        const stringPayload = JSON.stringify(resPayload);
+        res.setHeader("Content-Type", "application/json");
+        res.writeHead(statusCode);
+        res.write(stringPayload);
+        res.end();
+        console.log(statusCode, stringPayload);
+      });
+    });
+  });
+};
+
+posts("users");
+posts("tokens");
+posts("tasks");
+
+deletes("users");
+deletes("tokens");
+deletes("tasks");
+
+puts("users");
+puts("tokens");
+puts("tasks");
+
+gets("users");
+gets("tokens");
+gets("tasks");
+
+const routes = {
+  users: handlers._users,
+  tokens: handlers._tokens,
+  tasks: handlers._tasks,
+};
+
+expressApp.init = () => {
+  app.listen(process.env.EXPRESS_PORT, () => {
+    console.log(
+      ` express server is listening on port ${process.env.EXPRESS_PORT}`
+    );
+  });
+};
+
+module.exports = expressApp;
