@@ -97,7 +97,10 @@ server.routes = {
 
 server.init = () => {
   server.httpServer.listen(process.env.PORT, () => {
-    console.log(`server is listening on port ${process.env.PORT}`);
+    console.log(
+      "\x1b[35m%s\x1b[0m",
+      `server is listening on port ${process.env.PORT}`
+    );
   });
 };
 

@@ -44,7 +44,7 @@ const post = async (data, callback) => {
         });
       }
     } catch (error) {
-      callback(500, { error: error });
+      callback(400, { error: "an error occured user does not exist in db" });
     }
   } else {
     callback(400, {

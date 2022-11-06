@@ -38,7 +38,7 @@ const put = async (data, callback) => {
           if (validity) {
             if (details) data.details = details;
             if (due) data.due = due;
-            if (data.completed) data.completed = completed;
+            data.completed = completed;
             if (status) data.status = status;
             if (shouldAlert) data.shouldAlert = shouldAlert;
             //upade the task and also update the task in the user object
@@ -85,6 +85,7 @@ const put = async (data, callback) => {
   } else {
     callback(400, {
       error: "the data provided is either invalid or incomplete",
+      error2: payload,
     });
   }
 };

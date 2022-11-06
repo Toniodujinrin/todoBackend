@@ -47,8 +47,6 @@ mongoOps.delete = async (collection, id) => {
       .deleteOne({ _id: id });
     if (res) {
       return res;
-    } else {
-      throw new Error("no result from mongoDb");
     }
   } catch (error) {
     console.log(error);
@@ -64,8 +62,6 @@ mongoOps.read = async (collection, id) => {
       .findOne({ _id: id });
     if (res) {
       return res;
-    } else {
-      throw new Error("no result from mongoDb");
     }
   } catch (error) {
     console.log(error);

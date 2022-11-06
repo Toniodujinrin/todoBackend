@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const handlers = require("./handlers/handlers");
 const stringDecoder = require("string_decoder").StringDecoder;
+const util = require("util");
+const debug = util.debuglog("expressServer");
 require("dotenv").config();
 
 const expressApp = {};
@@ -31,7 +33,7 @@ const posts = (currentRoute) => {
         res.writeHead(statusCode);
         res.write(stringPayload);
         res.end();
-        console.log(statusCode, stringPayload);
+        debug(statusCode, stringPayload);
       });
     });
   });
@@ -59,7 +61,7 @@ const gets = (currentRoute) => {
         res.writeHead(statusCode);
         res.write(stringPayload);
         res.end();
-        console.log(statusCode, stringPayload);
+        debug(statusCode, stringPayload);
       });
     });
   });
@@ -88,7 +90,7 @@ const puts = (currentRoute) => {
         res.writeHead(statusCode);
         res.write(stringPayload);
         res.end();
-        console.log(statusCode, stringPayload);
+        debug(statusCode, stringPayload);
       });
     });
   });
@@ -109,15 +111,15 @@ const deletes = (currentRoute) => {
     req.on("end", () => {
       buffer += decoder.end();
 
-      const parsedJsonObject = JSON.parse(buffer);
-      data.payload = parsedJsonObject;
+      // const parsedJsonObject = JSON.parse(buffer);
+      // data.payload = parsedJsonObject;
       routes[currentRoute].delete(data, (statusCode, resPayload) => {
         const stringPayload = JSON.stringify(resPayload);
         res.setHeader("Content-Type", "application/json");
         res.writeHead(statusCode);
         res.write(stringPayload);
         res.end();
-        console.log(statusCode, stringPayload);
+        debug(statusCode, stringPayload);
       });
     });
   });
@@ -148,6 +150,7 @@ const routes = {
 expressApp.init = () => {
   app.listen(process.env.EXPRESS_PORT, () => {
     console.log(
+      "\x1b[36m%s\x1b[0m",
       ` express server is listening on port ${process.env.EXPRESS_PORT}`
     );
   });

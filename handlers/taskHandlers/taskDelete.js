@@ -27,7 +27,11 @@ const Delete = async (data, callback) => {
               //update the task array in the user object
               const userData = await _data.get("users", data.user);
               if (userData) {
-                userData.tasks.splice(userData.tasks.indexOf(taskId), 1);
+                //get the index of the task
+                const index = userData.tasks.indexOf(
+                  userData.tasks.find((task) => task._id == taskId)
+                );
+                userData.tasks.splice(index, 1);
                 //update user
                 try {
                   await _data.put("users", data.user, userData);

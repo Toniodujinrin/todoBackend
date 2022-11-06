@@ -1,6 +1,8 @@
 const _data = require("./lib/data");
 const { format } = require("date-fns");
 const helpers = require("./helpers");
+const util = require("util");
+const debug = util.debuglog("workers");
 
 const workers = {};
 
@@ -18,19 +20,17 @@ workers.gatherTasks = async () => {
             const originalTask = taskObject;
             workers.sanityCheckTask(originalTask);
           } else {
-            console.log(
-              "no task object was returned maybe it has been deleted"
-            );
+            debug("no task object was returned maybe it has been deleted");
           }
         } catch (error) {
-          console.log(error);
+          debug(error);
         }
       });
     } else {
-      console.log("there are no tasks to check ");
+      debug("there are no tasks to check ");
     }
   } catch (error) {
-    console.log("there are no tasks to check");
+    debug("there are no tasks to check");
   }
 };
 
@@ -69,7 +69,7 @@ workers.sanityCheckTask = (Task) => {
   ) {
     workers.scanForDue(originalTask);
   } else {
-    console.log("task is not valid skipping it ");
+    debug("task is not valid skipping it ");
   }
 };
 
@@ -91,7 +91,7 @@ workers.scanForDue = (originalTask) => {
   if (isNotCompleted && isDue && shouldAlert) {
     workers.alertUserAndUpdateTask(originalTask);
   } else {
-    console.log("the task is not due no need to alert");
+    debug("the task is not due no need to alert");
   }
 };
 
@@ -114,6 +114,7 @@ workers.loop = () => {
 workers.init = () => {
   workers.loop();
   workers.gatherTasks();
+  console.log("\x1b[37m%s\x1b[0m", "workers started");
 };
 
 module.exports = workers;

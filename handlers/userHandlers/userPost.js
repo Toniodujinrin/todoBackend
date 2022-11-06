@@ -1,6 +1,7 @@
 //required data: email, password, firstName, lastName,
 const _data = require("../../lib/data");
 const helpers = require("../../helpers");
+const createToken = require("../tokenHandlers/tokenPost");
 
 const post = async (data, callback) => {
   //validate fields coming from the browser
@@ -31,10 +32,19 @@ const post = async (data, callback) => {
       user.password = helpers.hash(password);
       user.email = email;
       user._id = email;
+      user.tasks = [];
 
       const res = await _data.post("users", email, user);
       if (res) {
-        callback(200, { message: "user created successfuly" });
+        const data = {
+          payload: {
+            email: email,
+            password: password,
+          },
+        };
+        createToken(data, (status, payload) => {
+          callback(status, payload);
+        });
       } else {
         callback(500, { message: "failed to connect to mongodb client" });
       }

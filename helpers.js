@@ -52,7 +52,10 @@ helpers.sendNodeMailer = (userEmail, message) => {
     if (err) {
       console.log("error sending mail");
     } else {
-      console.log(`email successfuly sent to ${userEmail}`);
+      console.log(
+        "\x1b[34m%s\x1b[0m",
+        `email successfuly sent to ${userEmail}`
+      );
     }
   });
 };
