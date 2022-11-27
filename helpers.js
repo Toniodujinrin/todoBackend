@@ -41,11 +41,14 @@ helpers.sendNodeMailer = (userEmail, message) => {
     },
   });
 
+
+
   let details = {
-    from: "marcelodujinrin@gmail.com",
+    from: "Timeline",
     to: userEmail,
     subject: "Check Alert",
     text: message,
+    
   };
 
   transporter.sendMail(details, (err) => {
