@@ -54,6 +54,7 @@ helpers.sendNodeMailer = (userEmail, message) => {
   transporter.sendMail(details, (err) => {
     if (err) {
       console.log("error sending mail");
+   
     } else {
       console.log(
         "\x1b[34m%s\x1b[0m",
