@@ -46,7 +46,7 @@ helpers.sendNodeMailer = (userEmail, message) => {
   let details = {
     from: "Timeline",
     to: userEmail,
-    subject: "Check Alert",
+    subject: "Task Alert",
     text: message,
     
   };
