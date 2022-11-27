@@ -6,7 +6,7 @@ const api = {};
 
 api.init = () => {
   workers.init();
-  server.init();
+ 
   expressApp.init();
 };
 
